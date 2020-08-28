@@ -1,0 +1,74 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}
+    Track your Order
+{% endblock %}
+
+{% block css %}
+    .search{
+        width: 300px;
+        height: 50px;
+        font-size: x-large;
+        border-right: 35px solid #343a40;
+        border-radius: 0px;
+    }
+
+{% endblock %}
+
+{% block body %}
+<div class="container my-4">
+    <div class="ml-auto text-right">
+    <form class="" action="" method="get">
+        <input type="text" class="search" name="search" id="search" placeholder="search">
+<!--        <button class="btn btn-success" type="submit" value="search">Search</button>-->
+    </form>
+        </div>
+    <h1 class="text-dark text-center">This is Order Tracker Page</h1>
+    <table class="table table-bordered table-hover mt-4" id="orders">
+        <thead class="text-center">
+            <tr>
+                <th scope="col" class="">Order ID</th>
+                <th scope="col" class="">Items</th>
+                <th scope="col" class="">Order Status</th>
+                <th scope="col" class=""></th>
+            </tr>
+        </thead>
+        <tbody class="">
+        {% for item in orders %}
+        <tr>
+            <th scope="row" class="text-center">{{ item }}</th>
+            <td class="">
+                <ol class="list">
+                    {% for i in item.order_items %}
+                    <li class="list-items">{{ i.product_id.product_name }}</li>
+                    {% endfor %}
+                </ol>
+            </td>
+            <td class="text-center">{{ item.order_status }}</td>
+            <td class="text-center">
+                {% if item.order_status == 'Pending' or item.order_status == 'Booked' %}
+                <button class="btn btn-danger text-light my-4" type="submit" value="delete">Cancel</button><br>
+                <button class="btn btn-primary text-light" type="submit" value="payment">Payment</button>
+                {% endif %}
+                {% if item.order_status == 'Delivered' %}
+                <button class="btn btn-primary text-light" type="submit" value="return">Return</button>
+                {% endif %}
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+{% block js %}
+<script>
+    $('document').ready(function(){
+        $('#search').on('keyup',function(){
+            var value = $(this).val().toLowerCase();
+            $('#orders tr').filter(function(){
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+    });
+</script>
+{% endblock %}

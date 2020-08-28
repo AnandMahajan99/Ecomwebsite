@@ -1,0 +1,26 @@
+{% extends 'shop/basic.html' %}
+
+{% block title %}  ProductView  {% endblock %}
+
+{% block body %}
+
+<div class="container">
+  <div class="row" style="margin-top:50px">
+     <div class="col-md-4" style="margin-top:50px">
+        <div class="row">
+           <img src="/media/{{product.image}}" alt="" height="300px" width="250px">
+        </div>
+        <div class="row">
+            <button class="btn btn-primary mx-3">Buy Now</button>
+            <button class="btn btn-primary">Add to Cart</button>
+        </div>
+     </div>
+     <div class="col-md-8" style="margin-top:100px">
+        <h5>{{product.product_name}}</h5>
+        <p><b>Rs </b>{{product.price}}</p>
+        <p>{{product.desc}}</p>
+     </div>
+  </div>
+</div>
+
+{% endblock %}

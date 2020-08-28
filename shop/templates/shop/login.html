@@ -1,0 +1,29 @@
+{% extends 'shop/basic.html' %}
+
+{% block body %}
+<div class="container">
+    <h2 class="danger text-center">{{ error }}</h2>
+    <div class="row my-4">
+        <div class="col-md-4 col-sm-2 col-2"></div>
+        <div class="col-md-4 col-sm-8 col-8 border">
+            <h2 class="text-center text-dark">Login Now</h2>
+            <form action="{% url 'User_Login' %}" method="post" name="login">
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ request.GET.next }}">
+                <div class="form-group">
+                    <label for="username">UserName</label>
+                    <input type="text" name="username" class="form-control" id="username" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" class="form-control" id="password" required>
+                </div>
+                <p class="text-right"><a href="#" style="color:#ffb606;">Forget Password</a></p>
+                <button type="submit" value="login" class="template-btn w-100">Login</button>
+            </form>
+            <p><a href="{% url 'Register' %}" style="color:#ffb606;"> Don't have an account?</a></p>
+        </div>
+        <div class="col-md-4 col-sm-2 col-2"></div>
+    </div>
+</div>
+{% endblock %}

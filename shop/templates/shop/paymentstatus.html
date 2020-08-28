@@ -1,0 +1,28 @@
+
+{% block title %} Payment Status {% endblock %}
+
+{% block body %}
+{{ response }}
+<div class="container">
+    <div class="container">
+        <h2 class="text-center">Payment Status regarding your order no. {{ response.ORDERID }}</h2><br><br>
+
+        {% if response.RESPCODE == '01' %}
+        <p>Success</p>
+        <h2 class="text-danger">Transaction Id : {{ response.TXNID }}</h2>
+        {% else %}
+        <h2>Failure</h2>
+        {% endif %}
+    </div>
+    <a href="{% url 'ShopHome' %}" ><button>Done</button></a>
+</div>
+{% endblock%}
+
+{% block js %}
+<script type="text/javascript">
+    {% if response.STATUS == 'TXN_SUCCESS' %}
+        console.log('Clear');
+        localStorage.clear();
+    {% endif %}
+</script>
+{% endblock%}
