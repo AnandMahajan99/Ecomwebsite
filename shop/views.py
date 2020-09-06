@@ -95,7 +95,7 @@ def checkout(request):
             'INDUSTRY_TYPE_ID': 'Retail',
             'WEBSITE': 'WEBSTAGING',
             'CHANNEL_ID': 'WEB',
-            'CALLBACK_URL': 'http://127.0.0.1:8000/shop/handlerequest/',
+            'CALLBACK_URL': 'http://127.0.0.1:8000/handlerequest/',
             'MOBILE_NO': '7777777777',
             'EMAIL': 'mahajan.anand27@gmail.com',
             'CUST_ID': str(request.user.id),
@@ -158,7 +158,7 @@ def user_logout(request):
 def user_login(request):
     context = {}
     if request.user.is_authenticated:
-        return redirect('/shop/')
+        return redirect('ShopHome')
     elif request.method == 'POST':
         username = request.POST.get('username','')
         password = request.POST.get('password','')
@@ -171,7 +171,7 @@ def user_login(request):
                 # return redirect('ShopHome')
                 next = request.POST.get('next','')
                 if next == '':
-                    next='/shop/'
+                    next = reverse('ShopHome')
                 return HttpResponseRedirect(next)
             else:
                 return HttpResponse('Account not active')
@@ -242,6 +242,17 @@ def response(request):
             return HttpResponse("checksum verify failed")
     return HttpResponse(status=200)
 """
+
+@login_required
+def cancel_order(request,id):
+    pass
+
+
+
+
+
+
+
 
 #
 # def demo(request):

@@ -1,0 +1,16 @@
+/shop/static/shop/css
+/shop/images
+/shop/migrations
+db.sqlite3
+/media
+/.idea
+/shop/static/shop/js/bootstrap.bundle.js
+/shop/static/shop/js/bootstrap.bundle.js.map
+/shop/static/shop/js/bootstrap.bundle.min.js
+/shop/static/shop/js/bootstrap.bundle.min.js.map
+/shop/static/shop/js/bootstrap.js
+/shop/static/shop/js/bootstrap.js.map
+/shop/static/shop/js/bootstrap.min.js
+/shop/static/shop/js/bootstrap.min.js.map
+/shop/static/shop/js/jquery.js
+/shop/static/shop/js/popper.min.js

@@ -40,12 +40,12 @@ body .carousel-control-prev-icon{
   {% load static %}
   <div class="container-fluid">
     {% for product, range, nSlides in allProds %}
-    <h1 class="text-center my-4">{{product.0.category}}</h1>
+    <h1 class="text-center my-4" style="color:#007bff;">{{ product.0.category }}</h1>
     <div id="carouselslide{{forloop.counter}}" class="carousel slide" data-ride="carousel">
       <ul class="carousel-indicators" >
         <li data-target="#carouselslide{{forloop.counter}}" data-slide-to="0" class="active" ></li>
         {% for i in range %}
-        <li data-target="#carouselslide{{forloop.parentloop.counter}}" data-slide-to={{i}} ></li>
+        <li data-target="#carouselslide{{forloop.parentloop.counter}}" data-slide-to={{ i }} ></li>
         {% endfor %}
       </ul>
       <div class="container carousel-inner no-padding">
@@ -53,15 +53,15 @@ body .carousel-control-prev-icon{
           {% for i in product %}
           <div class="col-xs-3 col-sm-3 col-md-3 ">
             <div class="card product align-item-center scroll">
-              <img id="imgpr{{i.id}}" src="\media\{{i.image}}" class="card-img-top" alt="...">
+              <img id="imgpr{{ i.id }}" src="\media\{{i.image}}" class="card-img-top" alt="...">
               <div class="card-body">
-                <h5 class="card-title inline-block" id="namepr{{i.id}}">{{i.product_name}}</h5>
+                <h5 class="card-title inline-block" id="namepr{{ i.id }}">{{ i.product_name }}</h5>
 <!--                <p class="card-text">{{i.desc|slice:'0:56'}}</p>-->
                 <div class="row">
-                  <p class="ml-3 text-primary">Price : Rs. </p><p id="pricepr{{i.id}}">{{i.price}}</p>
+                  <p class="ml-3 text-primary">Price : Rs. </p><p id="pricepr{{i.id}}">{{ i.price }}</p>
                 </div>
-                <div id="divpr{{i.id}}" class="divpr">
-                   <button id="pr{{i.id}}" class="btn btn-primary cart w-100" >Add to Cart</button>
+                <div id="divpr{{ i.id }}" class="divpr">
+                   <button id="pr{{ i.id }}" class="btn btn-primary cart w-100" >Add to Cart</button>
                 </div>
                 <a href="{% url 'Products' myid=i.id %}">
                     <button id="pr{{i.id}}" class="btn btn-primary w-100" style="margin-top:10px;">View</button>
