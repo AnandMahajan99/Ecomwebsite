@@ -1,5 +1,7 @@
 {% extends 'shop/basic.html' %}
+
 {% block title %} ShopHome {% endblock %}
+
 {% block css %}
 .col-md-3{
   display: inline-block;
@@ -35,7 +37,8 @@ body .carousel-control-prev-icon{
 .scroll {
     overflow-y: auto;
 }
-{% endblock %}
+  {% endblock %}
+
   {% block body %}
   {% load static %}
   <div class="container-fluid">
@@ -84,12 +87,10 @@ body .carousel-control-prev-icon{
     </div>
     {% endfor %}
   </div>
-
   {% endblock %}
 
 
   {% block js %}
-
   <script src="{% static '/shop/js/cart.js' %}"></script>
   <script type="text/javascript">/*
   //find out the cart Items fron localStorage

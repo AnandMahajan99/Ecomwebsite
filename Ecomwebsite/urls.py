@@ -21,6 +21,6 @@ from shop import views
 
 urlpatterns = [
     path('', include('shop.urls')),
-    path('admin/', admin.site.urls),
+    path('ecommerce/admin/', admin.site.urls),
     path('logout/', views.user_logout, name='Logout'),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

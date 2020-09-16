@@ -1,6 +1,7 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect
+
 from shop.models import Product, Contact, Orders, OrderItems, UserInfo, Payment
 from paytm import Checksum
 # OrderItem
@@ -18,25 +19,21 @@ MERCHANT_KEY = 'GvYRwo%@Vl2Ml19y'
 # MERCHANT_KEY = 'kbzk1DSbJiV_03p5'
 
 # Create your views here.
+
 def index(request):
     products = Product.objects.all()
-    # print(products)
     allProds = []
     catprods = Product.objects.values('category','id')
-    # print(catprods)
     cats = {item['category'] for item in catprods}
-    # print(cats)
     cats = sorted(cats)
     for cat in cats:
         prod = Product.objects.filter(category=cat)
         n = len(prod)           # n = len(products)
         nSlides = n//4 + ceil((n/4) - (n//4))
         allProds.append([prod, range(1, nSlides), nSlides])
-    # print(allProds)
     # params = {'no_of_slides':nSlides, 'range': range(1,nSlides),'product':products}
     # allProds = [[products, range(1,nSlides), nSlides],[products, range(1,nSlides), nSlides],[products, range(1,nSlides), nSlides]]
     params = {'allProds': allProds}
-    #print(params)
     return render(request,'shop/index.html', params)
 
 def about(request):
@@ -51,62 +48,6 @@ def contact(request):
         contact = Contact(name=name, email=email, phone=phone, desc=desc)
         contact.save()
     return render(request,'shop/contact.html')
-
-@login_required
-def checkout(request):
-    thank = False
-    id = 0
-    print(request.user.id, type(request.user.id))
-    userinfo = UserInfo.objects.get(user=request.user.id)
-    if request.method=="POST":
-        itemsJSON = request.POST.get('itemsJSON','')
-        name = request.POST.get('name','')
-        email = request.POST.get('email','')
-        address = request.POST.get('address','')
-        city = request.POST.get('city','')
-        state = request.POST.get('state','')
-        zip_code = request.POST.get('zip_code','')
-        phone = request.POST.get('phone','')
-
-        products = json.loads(itemsJSON)
-        total = 0
-        for desc in products.values():
-            total = total + (int(desc[0]) * int(desc[3]))
-        order = Orders(user_id=userinfo ,no_of_items=len(products), total_price=total, name=name, email=email,address=address, city=city, state=state, zip_code=zip_code, phone=phone)
-        order.save()
-
-        # print(type(items))
-        # print(items.keys())
-        for item, desc in products.items():
-            # pass
-            print(item[2:])
-            print(desc[0], desc[3])
-            order_item = OrderItems(order_id_id=order.order_id,
-                                   product_id_id=item[2:],
-                                   quantity=desc[0],
-                                   price=desc[3])
-            order_item.save()
-        id = order.order_id
-        thank = True
-
-        # Request payTm to transfer amount to your payment account
-        param_dict = {
-            'MID': 'BiDzIl44175596745392', # 'DIY12386817555501617',  'WorldP64425807474247',
-            'INDUSTRY_TYPE_ID': 'Retail',
-            'WEBSITE': 'WEBSTAGING',
-            'CHANNEL_ID': 'WEB',
-            'CALLBACK_URL': 'http://127.0.0.1:8000/handlerequest/',
-            'MOBILE_NO': '7777777777',
-            'EMAIL': 'mahajan.anand27@gmail.com',
-            'CUST_ID': str(request.user.id),
-            'ORDER_ID': str(order.order_id),
-            'TXN_AMOUNT': str(total),
-            'MERC_UNQ_REF' : str(request.user.id)
-        }
-        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
-        return  render(request, 'shop/paytm.html', {'param_dict': param_dict})
-
-    return render(request,'shop/checkout.html',{'userinfo': userinfo, 'thank': thank, 'id': id})
 
 def cart(request):
     return render(request, 'shop/cart.html')
@@ -124,7 +65,6 @@ def tracker(request):
     orders = Orders.objects.filter(user_id=userinfo)
     return render(request,'shop/tracker.html', {'orders': orders})
 
-
 def register(request):
     if request.method == 'POST':
         user_form = UserForm(data=request.POST)
@@ -133,11 +73,9 @@ def register(request):
             user = user_form.save()
             user.set_password(user.password)
             user.save()
-
             extended = extended_user_form.save(commit=False)
             extended.user = user
             extended.save()
-
             print("Registered")
             return redirect('User_Login')
         else:
@@ -147,13 +85,7 @@ def register(request):
     else:
         user_form = UserForm()
         extended_user_form = ExtendedUserForm()
-
     return render(request, 'shop/registration.html', {'user_form': user_form, 'extended_user_form': extended_user_form})
-
-@login_required
-def user_logout(request):
-    logout(request)
-    return HttpResponseRedirect(reverse('ShopHome'))
 
 def user_login(request):
     context = {}
@@ -175,7 +107,6 @@ def user_login(request):
                 return HttpResponseRedirect(next)
             else:
                 return HttpResponse('Account not active')
-
         else:
             print("Someone tried to login and failed")
             print(f"Username: {username} and Password: {password}")
@@ -184,10 +115,66 @@ def user_login(request):
         pass
     return render(request, 'shop/login.html', context)
 
+@login_required
+def user_logout(request):
+    logout(request)
+    return HttpResponseRedirect(reverse('ShopHome'))
+
+@login_required
+def checkout(request):
+    user_id = str(request.user.id)
+    # print(request.user.id, type(request.user.id))
+    userinfo = UserInfo.objects.get(user=request.user.id)
+    if request.method=="POST":
+        itemsJSON = request.POST.get('itemsJSON','')
+        name = request.POST.get('name','')
+        email = request.POST.get('email','')
+        address = request.POST.get('address','')
+        city = request.POST.get('city','')
+        state = request.POST.get('state','')
+        zip_code = request.POST.get('zip_code','')
+        phone = request.POST.get('phone','')
+
+        products = json.loads(itemsJSON)
+        total = 0
+        for desc in products.values():
+            total = total + (int(desc[0]) * int(desc[3]))
+        order = Orders(user_id=userinfo ,no_of_items=len(products),
+                       total_price=total, name=name, email=email,
+                       address=address, city=city, state=state,
+                       zip_code=zip_code, phone=phone)
+        order.save()
+
+        for item, desc in products.items():
+            order_item = OrderItems(order_id_id=order.order_id,
+                                   product_id_id=item[2:],
+                                   quantity=desc[0],
+                                   price=desc[3])
+            order_item.save()
+
+        order_id = str(order.order_id)
+
+        # Request payTm to transfer amount to your payment account
+        param_dict = {
+            'MID': 'BiDzIl44175596745392', # 'DIY12386817555501617',  'WorldP64425807474247',
+            'INDUSTRY_TYPE_ID': 'Retail',
+            'WEBSITE': 'WEBSTAGING',
+            'CHANNEL_ID': 'WEB',
+            'CALLBACK_URL': 'http://127.0.0.1:8000/handlerequest/',
+            'MOBILE_NO': '7777777777',
+            # 'EMAIL': 'mahajan.anand27@gmail.com',
+            'CUST_ID': user_id,
+            'ORDER_ID': order_id,
+            'TXN_AMOUNT': str(total),
+            'MERC_UNQ_REF': user_id
+        }
+        param_dict['CHECKSUMHASH'] = Checksum.generate_checksum(param_dict, MERCHANT_KEY)
+        return render(request, 'shop/paytm.html', {'param_dict': param_dict})
+    return render(request,'shop/checkout.html',{'userinfo': userinfo, 'id': id})
 
 @csrf_exempt
 def handlerequest(request):
-    # paytm will send you post request
+    # paytm will send you post request , this method handle the request
 
     response_dict = dict(request.POST.items())
 
@@ -218,48 +205,6 @@ def handlerequest(request):
         print('Someone tries to attack us')
     return render(request, 'shop/paymentstatus.html', {'response': response_dict})
 
-"""
-def response(request):
-    if request.method == "POST":
-        user = request.user
-        MERCHANT_KEY = settings.PAYTM_MERCHANT_KEY
-        data_dict = {}
-        data_dict = dict(request.POST.items())
-
-        verify = Checksum.verify_checksum(data_dict, MERCHANT_KEY, data_dict['CHECKSUMHASH'])             #verifing checksum
-        if verify:
-            for key in request.POST:                                                                      #converting string to float
-                if key == "BANKTXNID" or key == "RESPCODE":
-                    if request.POST[key]:
-                        data_dict[key] = int(request.POST[key])
-                    else:
-                        data_dict[key] = 0
-                elif key == "TXNAMOUNT":
-                    data_dict[key] = float(request.POST[key])
-            Paytm_history.objects.create(user_id = data_dict['MERC_UNQ_REF'], **data_dict)                 #saving data
-            return render(request, "paytm/response.html", {"paytm":data_dict, 'user': user})
-        else:
-            return HttpResponse("checksum verify failed")
-    return HttpResponse(status=200)
-"""
-
 @login_required
 def cancel_order(request,id):
     pass
-
-
-
-
-
-
-
-
-#
-# def demo(request):
-#     if request.method == 'GET':
-#         id = request.GET.getlist('id[]')
-#         print(type(id), id)
-#         # if(request.GET['name'] == 'Anand'):
-#         return HttpResponse("123")
-#     else:
-#         return HttpResponse("Not Get method")

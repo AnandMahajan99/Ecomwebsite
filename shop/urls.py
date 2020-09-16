@@ -1,5 +1,5 @@
 from django.urls import path, include
-from . import views
+from shop import views
 
 # app_name = 'shop'
 
@@ -16,5 +16,4 @@ urlpatterns = [
     path('user_login/', views.user_login, name="User_Login"),
     path('handlerequest/', views.handlerequest, name="HandleRequest")
 
-    # path('demo/', views.demo, name="Demo"),
 ]
